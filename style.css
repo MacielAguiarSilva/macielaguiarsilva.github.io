@@ -1,0 +1,23 @@
+.container {
+  display: grid;
+  grid-template: 80px repeat(5,70px)/repeat(4,1fr);
+  border: 2.5px solid black;
+  border-radius: 5px;
+  max-width: 500px;
+  margin: 10% auto;
+}
+.container h2 {
+  grid-column:span 4;
+  margin:auto 15px;
+  font-size: 30px;
+  overflow: auto;
+}
+.container button {
+  font-size: 25px;
+  background: aliceblue;
+}
+@media screen and (max-width: 975px){
+  .container {
+    margin: 10% 5%;
+  }
+}
