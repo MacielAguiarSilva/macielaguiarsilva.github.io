@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<title>Space Invaders</title>
+<style>
+  body {padding: 0; background: #00085E; min-width:800px; width:100vw}
+  
+  .canvas {
+    width:100%; display:flex; 
+    justify-content:center;
+    padding: 5%;
+  }
+  canvas {
+    background: linear-gradient(to bottom, darkblue, black);
+    min-width: 99vw;
+  }
+  div {width:800px}
+  .div1 {
+    display:flex; justify-content:space-between;
+    padding: 2% 5% 0 5%;
+    width: 100vw; min-width: 800px; user-select:none; 
+  }
+  .div1 button {
+    width:250px;
+    height: 40px;
+    background: skyblue; color: white;
+    font-size: 25px;
+    font-weight: bold;
+  }
+  .div2 {
+    min-width: 100vw;
+    margin: 5%;
+    display: grid;
+    grid-template: 100px / 1fr 1fr 1fr;
+    gap: 5%;
+  }
+  .div2 button {
+    user-select:none; font-size:75px; background:skyblue;
+  }
+</style>
+</head>
+<body>
+  
+  <div class="div1">
+    <button onclick="togglePause()">Pause</button>
+    <button onclick="reiniciarJogo()">Tentar Novamente</button>
+  </div>
+  
+  <div class="canvas">
+    <canvas id="gameCanvas" width="750" height="600"></canvas>
+  </div>
+
+  <div class="div2">
+    <button id="b1">️❌</button>
+    <button id="b2">⬅️</button>
+    <button id="b3">➡️</button>
+  </div>
+
+<script>
+  // Definições iniciais do canvas e variáveis do jogo
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  let naveX, gameOver, projeteis, invaders, nivel, pontuacao, imagensCarregadas, totalImagens;
+  let invaderVelocidadeX, invaderVelocidadeY; // Adicione estas duas linhas
+  let spriteNave = new Image();
+  let spriteInvader = new Image();
+  
+  // Funções do jogo
+  function inicializarVariaveis() {
+    naveX = canvas.width / 2;
+    gameOver = false;
+    projeteis = [];
+    invaders = [];
+    nivel = 1;
+    pontuacao = 0;
+    imagensCarregadas = 0;
+    totalImagens = 2; // Total de imagens a serem carregadas
+    invaderVelocidadeX = 2; // Inicialize a velocidade X do invader
+    invaderVelocidadeY = 0; // Inicialize a velocidade Y do invader, se necessário
+  }
+  
+  function carregarSprites() {
+    spriteNave.src = 'img/player.png'; // Caminho correto do sprite da nave
+    spriteInvader.src = 'img/alien.png'; // Caminho correto do sprite do invader
+    spriteNave.onload = verificarCarregamentoImagens;
+    spriteInvader.onload = verificarCarregamentoImagens;
+  }
+  
+  function verificarCarregamentoImagens() {
+    imagensCarregadas++;
+    if (imagensCarregadas === totalImagens) {
+      inicializarInvaders();
+      loopDoJogo(); // Inicia o loop do jogo após o carregamento das imagens
+    }
+  }
+  
+  function inicializarInvaders() {
+    invaders = []; // Limpa os invaders anteriores
+    let numeroDeInvaders = (Math.random()* nivel) + nivel; // Calcula o número total de invaders baseado no nível
+    for (let i = 0; i < numeroDeInvaders; i++) {
+      let posicaoX = Math.random() * (canvas.width - 40) + 20; // Gera uma posição X aleatória
+      let posicaoY = Math.random() * 200 + 30; // Gera uma posição Y aleatória dentro de um limite
+      invaders.push({ x: posicaoX, y: posicaoY, vivo: true });
+    }
+  }
+  
+  function desenharNave() {
+    ctx.drawImage(spriteNave, naveX, canvas.height - 40, 30, 30); // Ajuste as dimensões conforme necessário
+  }
+  
+  function desenharInvaders() {
+    invaders.forEach(invader => {
+      if (invader.vivo) {
+        ctx.drawImage(spriteInvader, invader.x, invader.y, 40, 40); // Ajuste as dimensões conforme necessário
+      }
+    });
+  }
+  
+  function atualizarInvaders() {
+    let amplitude = 2 + (nivel / 3); // Amplitude do movimento ondulatório
+    let frequencia = 0.05 + (nivel / 50); // Frequência do movimento ondulatório aumenta com o nível
+    let deslocamentoVertical = 1 + (nivel / 20); // Deslocamento vertical constante
+    let deslocamentoAoMudarDirecao = 1; // Deslocamento vertical ao mudar de direção
+    let atingiuBorda = false;
+  
+    invaders.forEach(invader => {
+      // Aplica o movimento ondulatório horizontal
+      invader.x += invaderVelocidadeX * Math.sin(frequencia * invader.y) * amplitude;
+  
+      // Aplica o movimento vertical constante
+      invader.y += deslocamentoVertical;
+  
+      // Corrige a posição dos invaders que ultrapassaram as bordas
+      if (invader.x > canvas.width - 40) {
+        invader.x = canvas.width - 40;
+        atingiuBorda = true;
+      } else if (invader.x < 0) {
+        invader.x = 0;
+        atingiuBorda = true;
+      }
+  
+      // Verifica se algum invader passou pela nave do jogador
+      if (invader.y > canvas.height - 40 && invader.vivo) {
+        gameOver = true;
+      }
+    });
+  
+    // Se algum invader atingir a borda, todos mudam de direção e descem um pouco
+    if (atingiuBorda) {
+      invaderVelocidadeX *= -1;
+      invaders.forEach(invader => {
+        invader.y += deslocamentoAoMudarDirecao;
+      });
+    }
+  
+    // Se for game over, encerra o loop do jogo e exibe a mensagem
+    if (gameOver) {
+      exibirGameOver();
+    }
+  }
+  
+  function desenharPontuacao() {
+    ctx.font = '16px Arial';
+    ctx.fillStyle = 'white';
+    ctx.fillText('Pontuação: ' + pontuacao, 80, 20);
+    ctx.fillText('Nível: ' + nivel, canvas.width - 140, 20);
+  }
+  
+  function verificarColisoes() {
+    projeteis.forEach((proj, indexProj) => {
+      invaders.forEach((inv, indexInv) => {
+        if (proj.x < inv.x + 40 &&
+            proj.x + 2 > inv.x &&
+            proj.y < inv.y + 40 &&
+            proj.y + 6 > inv.y &&
+            inv.vivo) {
+          invaders.splice(indexInv, 1);
+          projeteis.splice(indexProj, 1);
+          pontuacao += 10;
+          if (invaders.length === 0) {
+            nivel++; // Aumenta o nível quando todos os invaders são destruídos
+            inicializarInvaders(nivel);
+          }
+        }
+      });
+    });
+  }
+  
+  function atualizarProjeteis() {
+    projeteis.forEach((proj, index) => {
+      proj.y -= 5 + 0.5 * nivel; // Aumenta a velocidade dos projéteis com o nível
+      if (proj.y < 0) {
+        projeteis.splice(index, 1);
+      } else {
+        ctx.fillStyle = 'red';
+        ctx.fillRect(proj.x, proj.y, 2, 6);
+      }
+    });
+  }
+  
+  function exibirGameOver() {
+    ctx.font = '30px Arial';
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+    ctx.font = '20px Arial';
+    ctx.fillText('Score: ' + pontuacao, canvas.width / 2, canvas.height / 2 + 30);
+  }
+  
+  function reiniciarJogo() {
+    inicializarVariaveis();
+    inicializarInvaders();
+    loopDoJogo();
+  }
+  
+  function loopDoJogo() {
+    if (!gameOver) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      desenharNave();
+      desenharInvaders();
+      atualizarInvaders();
+      atualizarProjeteis();
+      verificarColisoes();
+      desenharPontuacao();
+      if (nivel >= 10) {
+        desenharBoss(); // Desenha o boss se o nível for 10 ou maior
+        verificarColisoesComBoss(); // Verifica colisões com o boss
+      }
+      requestAnimationFrame(loopDoJogo);
+    } else {
+      exibirGameOver();
+    }
+  }
+  
+  // Event listeners para controle da nave
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowLeft' && naveX > 0) {
+      naveX -= 10;
+    } else if (event.key === 'ArrowRight' && naveX < canvas.width - 30) {
+      naveX += 10;
+    } else if (event.key === ' ' && projeteis.length < 3 + nivel) {
+      projeteis.push({ x: naveX + 15, y: canvas.height - 30 });
+    }
+  });
+  
+  // Inicialização do jogo
+  window.onload = function() {
+    inicializarVariaveis();
+    carregarSprites();
+  };
+</script>
+<script>
+  let space = document.getElementById('b1');
+  let left = document.getElementById('b2');
+  let right = document.getElementById('b3');
+  
+  let a = s = d = false;
+  
+  function cell() {
+    if (a && naveX > 0) {
+      naveX -= 10;
+    } else if (d && naveX < canvas.width - 30) {
+      naveX += 10;
+    } else if (s && projeteis.length < 3 + nivel) { // Limita o número de projéteis na tela
+      projeteis.push({ x: naveX + 15, y: canvas.height - 30 });
+    }
+    requestAnimationFrame(cell)
+  }
+  
+  left.ontouchstart = () => { a = true; }
+  right.ontouchstart = () => { d = true; }
+  space.ontouchstart = () => { s = true; }
+  
+  left.ontouchend = () => { a = false }
+  right.ontouchend = () => { d = false }
+  space.ontouchend = () => { s = false }
+  
+  cell()
+</script>
+</body>
+</html>
