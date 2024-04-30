@@ -2,24 +2,30 @@
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="user-scalable=no">
 <title>Space Invaders</title>
 <style>
-  body {padding: 0; background: #00085E; min-width:800px; width:100vw}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  body {padding: 0; background: #00085E;}
   
   .canvas {
-    width:100%; display:flex; 
+    width:900px; display:flex; min-width: 100vw;
     justify-content:center;
-    padding: 5%;
   }
   canvas {
     background: linear-gradient(to bottom, darkblue, black);
-    min-width: 99vw;
+    width: 900px;
+    border: 1px solid white;
   }
-  div {width:800px}
+  div {width:900px}
   .div1 {
     display:flex; justify-content:space-between;
-    padding: 2% 5% 0 5%;
-    width: 100vw; min-width: 800px; user-select:none; 
+    padding: 2% 0;
+    width: 900px; min-width: 100vw; user-select:none; 
   }
   .div1 button {
     width:250px;
@@ -29,15 +35,17 @@
     font-weight: bold;
   }
   .div2 {
+    width: 900px;
     min-width: 100vw;
-    margin: 5%;
     display: grid;
     grid-template: 100px / 1fr 1fr 1fr;
-    gap: 5%;
+    gap: 10%;
+    margin: 50px 0;
   }
   .div2 button {
     user-select:none; font-size:75px; background:skyblue;
   }
+  button:hover {background:#00B7DB}
 </style>
 </head>
 <body>
