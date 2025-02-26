@@ -1,22 +1,265 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
+
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  /*<link rel="stylesheet" href="three.css">*/
+  <style>* {box-sizing:border-box; margin:0; padding:0;}
+body {background: #F2FCFB; color: purple;}
+header {
+  display: flex;
+  flex-flow: row nowrap;
+  background: #40e0d0;
+  justify-content: space-between;
+  text-align: center;
+  padding: 2% 5%;
+}
+.logo {
+  font-size: 25px;
+  margin: auto 0;
+}
+.lupa {
+  border-radius: 50px;
+  padding: 15px;
+  margin: 0 10%;
+  width: 70%;
+  text-align: center;
+  border: 1px solid black;
+  outline: none;
+}
+/* itens da pesquisa começo  */
+.item {display: none;}
+.itens {
+  text-align: center;
+  font-size: 20px;
+}
+.item {
+  padding: 10px;
+  list-style-type: none;
+  border-bottom: 1px solid black;
+}
+.item a {
+  text-decoration: none;
+  color: black;
+}
+.x {
+  display: none;
+  font-size: 30px;
+  margin: 5px 0 5px 12px;
+}
+/*  itens de pesquisa  final  */
+/* MENU */
+.btnMenu {
+  margin: auto 0;
+  font-size: 40px;
+}
+.btn:hover {font-weight: bold;}
+.menu-pai {
+  display: flex;
+  flex-flow: column wrap;
+  border: 1px solid black;
+  height: 100vh;
+  width: 250px;
+  margin-left: -250px;
+  position: absolute;
+  top: 0;
+  transition: 0.25s;
+  background: white;
+  z-index: 1;
+}
+.active-menu {margin-left: 0;}
+h3.menu-filho{
+  padding: 10px;
+  border-bottom: 1px solid black;
+  text-align: center;
+}
+.menu-neto {
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  opacity: 50%;
+}
 
-  <title>HTML</title>
-  
-  <!-- HTML -->
-  
+/* MENU FIM */
 
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="style.css">
+.sites {
+  display: flex;
+  flex-flow: row nowrap;
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+section h2 {
+  margin: 20px;
+}
+section .card {
+  box-shadow: 1px 2px 4px black;
+  min-width: 250px;
+  height: 250px;
+  margin: 4px 20px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  padding: 50px 0;
+  background: white;
+}
+.card img {
+  width: 248px;
+  height: auto;
+  max-height: 245px;
+  border-radius: 4px;
+  
+}
+
+
+footer {
+  background: #40e0d0;
+  padding: 50px;
+  text-align: center;
+  margin-top: 40px
+}</style>
+  <title>Home page</title>
 </head>
 
 <body>
-  <p>Nothing to see here...</p>
-  <!-- Project -->
-  <script src="main.js"></script>
+  <header>
+    <h1 class="logo">logo</h1>
+    <input type="text" placeholder="🔎" class="lupa" onkeyup="pesquisa()" autocomplete="off">
+    <a class="btnMenu">≡</a>
+    
+    <a class="x" onclick="voltarPesquisa()">❌</a>
+  </header>
+  
+  <nav>
+    <!-- ITENS DE PESQUISA -->
+    <ol class="itens">
+      <li class="item"><a href="">velha</a></li>
+      <li class="item"><a href="">site1</a></li>
+      <li class="item"><a href="">site2</a></li>
+    </ol>
+    <!-- MENU -->
+    <div class="menu-pai">
+      <h3 class="menu-filho">menu</h3>
+      <ul class="menu-filho">
+        <li class="menu-neto">item1</li>
+        <li class="menu-neto">item2</li>
+        <li class="menu-neto">item3</li>
+      </ul>
+    </div>
+  </nav>
+  <div id="overlay"></div>
+  
+  <section>
+    <h2>Meus sites</h2>
+    <div class="sites">
+      <div class="card">
+        <a href="../sites/site1/site1.html"><img src="../img/site1.jpg"></a>
+      </div>
+      <div class="card">
+        <a href="../sites/calculadora/calculadora.html"><img src="../img/calculadora.jpg"></a>
+      </div>
+      <div class="card">
+        <a href="../sites/tarefas/tarefas.html"><img src="../img/calculadora.jpg"></a>
+      </div>
+    </div>
+  </section>
+  
+  <section class="jogos">
+    <h2>Meus jogos</h2>
+    <div class="sites">
+      <div class="card">
+        <a href="../jogos/velha/t2.html"><img src="../img/velha.png"></a>
+      </div>
+      <div class="card">
+        <a href=""><img src=""></a>
+      </div>
+    </div>
+  </section>
+  
+  <section class="certificados">
+    <h2>Certificados</h2>
+    <div class="sites">
+      <div class="card">
+        <a href=""><img src="../img/Certificado-desenvolvedor-web.png"></a>
+      </div>
+      <div class="card">
+        <a href=""><img src="../img/Desenvolvedor Python_certificate.jpg"></a>
+      </div>
+      <div class="card">
+        <a href=""><img src="../img/Desenvolvedor Python_certificate.jpg"></a>
+      </div>
+      <div class="card">
+        <a href=""><img src="../img/Desenvolvedor Python_certificate.jpg"></a>
+      </div>
+    </div>
+  </section>
+  
+  <footer>
+    <p>para mais mais informações <a href="">google</a></p>
+    <br>
+    <h4>© diretos reservados Mister S.A.</h4>
+  </footer>
+  
+  <script>var logo = document.querySelector('.logo');
+var lupa = document.querySelector('.lupa');
+var btn = document.querySelector('.btnMenu');
+var v = document.querySelector('.x');
+var itens = document.querySelector('.itens');
+
+lupa.onclick = () => {
+  logo.style='display:none';
+  btn.style='display:none';
+  lupa.style='width:100vw; margin:0';
+  v.style='display:block'
+}
+function pesquisa() {
+  itens.style = 'display:block';
+  
+  input = lupa.value;
+  input = input.toLowerCase();
+  let x=document.getElementsByClassName('item');
+  
+  for (i = 0; i < x.length; i++) {
+    if (!x[i].innerHTML.toLowerCase().includes(input)) {
+      x[i].style.display = "none";
+    }
+    else {
+      x[i].style.display = "list-item";
+    }
+  }
+}
+function voltarPesquisa() {
+  logo.style = 'display:block';
+  btn.style = 'display:block';
+  lupa.style = 'width:30%';
+  v.style = 'display:none';
+  itens.style = 'display:none';
+}
+
+// MENU
+
+let menu = document.querySelector('.menu-pai');
+let btnMenu= document.querySelector('.btnMenu');
+let overlay= document.getElementById('overlay');
+
+btnMenu.onclick = () => {
+  menu.classList.toggle("active-menu");
+  overlay.classList.toggle("overlay");
+}
+overlay.onclick =()=> {
+ overlay.classList.toggle("overlay");
+  menu.classList.toggle("active-menu");
+}
+// fim MENU
+
+</script>
 </body>
+
 </html>
