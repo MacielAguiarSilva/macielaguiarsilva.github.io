@@ -3,7 +3,7 @@ class AudioManager {
   constructor() {
     this.sounds = {};
     // Música de fundo com volume 1; outros efeitos com volume 0.5.
-    this.loadSound('background', 'assets/background.mp3', 1);
+    this.loadSound('background', 'assets/background_sound', 1);
     this.loadSound('jump', 'assets/jump.mp3', 0.5);
     this.loadSound('walk', 'assets/walk.mp3', 0.5);
     this.loadSound('damage', 'assets/damage.mp3', 0.5);
