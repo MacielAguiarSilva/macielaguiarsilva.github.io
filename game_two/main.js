@@ -76,7 +76,7 @@ function drawBackground() {
     platforms = mapManager.generateInitialPlatforms();
     
     score = 0;
-    player.health = 300;
+    player.health = 3;
     gameOver = false;
     lastTime = 0;
     document.getElementById('retryButton').style.display = 'none';
