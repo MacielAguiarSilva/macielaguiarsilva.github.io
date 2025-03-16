@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>GAME TWO</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: sans-serif;
+    }
+    /* Layout: 80vh para o jogo e 20vh para os controles */
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+    #gameContainer {
+      height: 80vh;
+      width: 100%;
+      background: #222;
+      overflow: hidden;
+      position: relative;
+    }
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #222;
+    }
+    /* Mobile Controls: botões de mover à esquerda e de pular à direita */
+    #mobileControls {
+      position: relative;
+      height: 20vh;
+      width: 100%;
+      background: #333;
+    }
+    #leftControls, #rightControls {
+      position: absolute;
+      bottom: 10px;
+    }
+    #leftControls {
+      left: 10px;
+      display: flex;
+      gap: 10px;
+    }
+    #rightControls {
+      right: 10px;
+    }
+    #leftControls button, #rightControls button {
+      width: 20vw;
+      height: 20vw;
+      margin: 10px;
+      font-size: 5vw;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.8);
+      pointer-events: auto;
+    }
+    /* Botão Retry deve ficar escondido inicialmente */
+    #retryButton {
+      display: none;
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 15px 30px;
+      font-size: 24px;
+      z-index: 30;
+    }
+    /* Tela de Start - aparece por padrão e contém o botão Start */
+    #startScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 40;
+    }
+    /* O botão Start agora não tem display: none, garantindo que apareça */
+    #startButton {
+      /* Sem display:none; ele deve aparecer */
+      padding: 15px 30px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
+  </div>
+  
+  <!-- Mobile Controls -->
+  <div id="mobileControls">
+    <div id="leftControls">
+      <button id="btnLeft">←</button>
+      <button id="btnRight">→</button>
+    </div>
+    <div id="rightControls">
+      <button id="btnJump">↑</button>
+    </div>
+  </div>
+  
+  <button id="retryButton">Tente novamente</button>
+  
+  <!-- Tela de Start -->
+  <div id="startScreen">
+    <button id="startButton">Start</button>
+  </div>
+  
+  <!-- Ordem dos scripts: sprites.js, audio.js, controls.js, collision.js, platforms.js, enemy.js, player.js, map.js, improvements.js, main.js -->
+  <script src="sprites.js"></script>
+  <script src="audio.js"></script>
+  <script src="controls.js"></script>
+  <script src="collision.js"></script>
+  <script src="platforms.js"></script>
+  <script src="enemy.js"></script>
+  <script src="player.js"></script>
+  <script src="map.js"></script>
+  <script src="improvements.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
