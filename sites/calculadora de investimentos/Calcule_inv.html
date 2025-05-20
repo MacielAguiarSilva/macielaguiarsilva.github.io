@@ -1,1 +1,138 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Simulador de Investimento</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root { --primary:#4f46e5; --secondary:#818cf8; --bg:#f9fafb; --card:#ffffff; --text:#1f2937; }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;}
+    .card{background:var(--card);border-radius:1rem;box-shadow:0 5px 15px rgba(0,0,0,0.1);width:100%;max-width:360px;overflow:hidden;}
+    header{background:linear-gradient(135deg,var(--primary),var(--secondary));padding:1rem;text-align:center;}
+    header h1{color:#fff;font-size:1.5rem;font-weight:700;}
+    .content{padding:1rem;position:relative;}
+    .field{margin-bottom:1rem;display:flex;flex-direction:column;}
+    .field label{font-weight:600;margin-bottom:0.25rem;font-size:0.9rem;}
+    .field input,.field select{padding:0.6rem 0.75rem;border:1px solid #d1d5db;border-radius:0.75rem;font-size:0.9rem;}
+    .field-row{display:flex;align-items:center;}
+    .field-row .field{flex:1;margin-right:0.5rem;}
+    .info-btn{width:1.4rem;height:1.4rem;background:var(--secondary);color:#fff;border:none;border-radius:50%;font-size:1rem;line-height:1;text-align:center;cursor:pointer;margin-left:0.5rem;}
+    .modal{display:none;position:absolute;top:0.5rem;right:0.5rem;width:250px;background:#fff;border:1px solid #ccc;border-radius:0.75rem;padding:0.75rem;box-shadow:0 4px 10px rgba(0,0,0,0.1);z-index:10;}
+    .modal h3{margin-bottom:0.5rem;font-size:1rem;}
+    .modal ul{list-style:none;padding-left:1rem;max-height:200px;overflow-y:auto;}
+    .modal ul li{margin-bottom:0.25rem;font-size:0.8rem;}
+    .modal-close{position:absolute;top:0.25rem;right:0.25rem;background:none;border:none;font-size:1rem;cursor:pointer;}
+    .actions{text-align:center;margin-top:1rem;}
+    .actions button{width:100%;background:var(--primary);color:#fff;padding:0.6rem;font-size:1rem;font-weight:600;border:none;border-radius:0.75rem;cursor:pointer;transition:background .3s;}
+    .actions button:hover{background:var(--secondary);}
+    .result{margin-top:1rem;background:#f3f4f6;padding:0.75rem;border-radius:0.75rem;font-size:0.9rem;line-height:1.4;white-space:pre-line;}
+    canvas{margin-top:1rem;border-radius:0.75rem;width:100%!important;height:250px!important;}
+    @media (min-width: 480px) {
+      body{padding:2rem;}
+      header h1{font-size:1.75rem;}
+      .content{padding:1.5rem;}
+      .actions button{padding:0.75rem;font-size:1.1rem;}
+      canvas{height:300px!important;}
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <header><h1>Simulador de Investimento</h1></header>
+    <div class="content">
+      <div class="field">
+        <label for="startDate">Data Inicial</label>
+        <input type="date" id="startDate" />
+      </div>
+      <div class="field">
+        <label for="months">Meses de Investimento</label>
+        <input type="number" id="months" value="12" min="1" />
+      </div>
+      <div class="field">
+        <label for="rateType">Tipo de Taxa de Investimento</label>
+        <select id="rateType"></select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="rateValue">Valor da Taxa (%)</label>
+          <input type="number" id="rateValue" value="0.05" step="0.01" />
+        </div>
+        <button class="info-btn" id="infoBtn" aria-label="Informações de Taxas">?</button>
+      </div>
+      <div id="rateModal" class="modal">
+        <button class="modal-close" id="closeModal">×</button>
+        <h3>Taxas Atuais</h3>
+        <ul>
+          <li><strong>CDB (100% CDI):</strong> 0,0543% dia, 1,06% mês</li>
+          <li><strong>CDB (110% CDI):</strong> 0,0597% dia, 1,16% mês</li>
+          <li><strong>Poupança:</strong> 0,5% mês</li>
+          <li><strong>Tesouro Selic:</strong> 14,75% a.a.</li>
+          <li><strong>LCI (96% CDI):</strong> 0,0521% dia, 1,015% mês</li>
+          <li><strong>Tesouro IPCA+:</strong> IPCA +7,37% a.a.</li>
+          <li><strong>Fundo DI (80% CDI):</strong> 0,0434% dia, 0,85% mês</li>
+        </ul>
+      </div>
+      <div class="field">
+        <label for="initial">Valor Inicial (R$)</label>
+        <input type="number" id="initial" value="1000" step="0.01" />
+      </div>
+      <div class="field">
+        <label for="salary">Aporte Mensal (R$)</label>
+        <input type="number" id="salary" value="100" step="0.01" />
+      </div>
+      <div class="field">
+        <label for="salaryBusinessDay">Dia útil para aporte</label>
+        <input type="number" id="salaryBusinessDay" value="5" min="1" max="7" />
+      </div>
+      <div class="actions">
+        <button id="calculateBtn">Calcular</button>
+      </div>
+      <div id="result" class="result"></div>
+      <canvas id="chart"></canvas>
+    </div>
+  </div>
+  <script>
+    // Modal logic
+    const infoBtn = document.getElementById('infoBtn');
+    const rateModal = document.getElementById('rateModal');
+    const closeModal = document.getElementById('closeModal');
+    infoBtn.onclick = () => rateModal.style.display = 'block';
+    closeModal.onclick = () => rateModal.style.display = 'none';
+    window.onclick = e => { if (e.target === rateModal) rateModal.style.display = 'none'; };// Fill rateType options
+const rateType = document.getElementById('rateType');
+['Diária','Mensal'].forEach(opt=>{
+  const o=document.createElement('option'); o.value=opt.toLowerCase(); o.text=opt; rateType.add(o);
+});
 
+let chartInstance = null;
+const savingsMonthlyRate = 0.005;
+function isBusinessDay(d) { const day = d.getDay(); return day!==0 && day!==6; }
+function findNthBusinessDay(year, month, n) {
+  let count=0; const date=new Date(year,month,1);
+  while(count<n) { if(isBusinessDay(date)) count++; if(count<n) date.setDate(date.getDate()+1); }
+  return date;
+}
+document.getElementById('calculateBtn').addEventListener('click',calculate);
+function calculate() {
+  document.getElementById('result').innerText='';
+  if(chartInstance) chartInstance.destroy();
+  const start=document.getElementById('startDate').value;
+  if(!start) return alert('Selecione data inicial');
+  const months=+document.getElementById('months').value;
+  const rt=document.getElementById('rateType').value;
+  const invRate=+document.getElementById('rateValue').value/100;
+  const initial=+document.getElementById('initial').value;
+  const salary=+document.getElementById('salary').value;
+  const salDay=+document.getElementById('salaryBusinessDay').value;
+  const contribTotal=salary*months;
+  let investTotal=initial, saveTotal=initial;
+  const labels=[], invData=[], savData=[];
+  let current=new Date(start);
+  const endDate = new Date(current); endDate.setMonth(endDate.getMonth()+months);
+  while(current<endDate){ if(isBusinessDay(current)){ const nth = findNthBusinessDay(current.getFullYear(),current.getMonth(),salDay); if(current.toDateString()===nth.toDateString()){ investTotal+=salary; saveTotal+=salary;} if(rt==='diária'){ investTotal*=(1+invRate);} else { if(current.getDate()===new Date(current.getFullYear(),current.getMonth()+1,0).getDate()) investTotal*=(1+invRate);} if(current.getDate()===new Date(current.getFullYear(),current.getMonth()+1,0).getDate()) saveTotal*=(1+savingsMonthlyRate);} if(current.getDate()===new Date(current.getFullYear(),current.getMonth()+1,0).getDate()){ labels.push(`${current.getMonth()+1}/${current.getFullYear()}`); invData.push(investTotal.toFixed(2)); savData.push(saveTotal.toFixed(2));} current.setDate(current.getDate()+1);} const invProfit=(investTotal-initial-contribTotal).toFixed(2); const savProfit=(saveTotal-initial-contribTotal).toFixed(2); document.getElementById('result').innerText=`Saldo final Investimento: R$ ${investTotal.toFixed(2)}\nContribuições: R$ ${contribTotal.toFixed(2)}\nLucro Investimento: R$ ${invProfit}\n\nSaldo final Poupança: R$ ${saveTotal.toFixed(2)}\nLucro Poupança: R$ ${savProfit}`; const ctx=document.getElementById('chart').getContext('2d'); chartInstance=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Investimento',data:invData,borderRadius:6,maxBarThickness:40},{label:'Poupança',data:savData,borderRadius:6,maxBarThickness:40}]},options:{responsive:true,scales:{y:{beginAtZero:true}}}});}
+
+  </script>
+</body>
+</html>
